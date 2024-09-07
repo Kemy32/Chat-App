@@ -5,14 +5,15 @@ import * as Yup from "yup";
 import { checkPassword } from "../../../network/user.api";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setToken } from "../../../store/redux/userSlice";
-const Page = () => {
+
+const CheckPassword = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [userData, setUserData] = useState({});
   const dispatch = useDispatch();
+  const searchParams = useSearchParams();
   useEffect(() => {
     const data = searchParams.get("data");
     if (data) {
@@ -53,49 +54,59 @@ const Page = () => {
   const { values, handleChange, handleBlur, handleSubmit, errors, touched } =
     formik;
   return (
-    <div className="mt-4 flex justify-center items-center w-full h-full">
-      <div className="bg-white w-full max-w-md rounded overflow-hidden p-4 mx-auto shadow-md mt-8">
-        <h3 className="w-full text-center text-primary font-semibold text-2xl mb-5  ">
-          Welcome to Amit Chat App!
-        </h3>
-        <form onSubmit={handleSubmit} className="grid gap-4 mt-5">
-          <div className="flex flex-col gap-1 mb-1">
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              placeholder="Enter your password"
-              className="bg-slate-100 px-2 py-1 focus:outline-primary"
-              value={values["password"]}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              required
-            />
-            {touched["password"] && errors["password"] ? (
-              <div className="text-red-500 text-sm">{errors["password"]}</div>
-            ) : null}
-          </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="mt-4 flex justify-center items-center w-full h-full">
+        <div className="bg-white w-full max-w-md rounded overflow-hidden p-4 mx-auto shadow-md mt-8">
+          <h3 className="w-full text-center text-primary font-semibold text-2xl mb-5  ">
+            Welcome to Amit Chat App!
+          </h3>
+          <form onSubmit={handleSubmit} className="grid gap-4 mt-5">
+            <div className="flex flex-col gap-1 mb-1">
+              <label htmlFor="password">Password:</label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Enter your password"
+                className="bg-slate-100 px-2 py-1 focus:outline-primary"
+                value={values["password"]}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                required
+              />
+              {touched["password"] && errors["password"] ? (
+                <div className="text-red-500 text-sm">{errors["password"]}</div>
+              ) : null}
+            </div>
 
-          <button
-            type="submit"
-            disabled={!formik.dirty || !formik.isValid}
-            className="bg-primary text-lg px-4 disabled:bg-secondary hover:bg-secondary rounded mt-2 font-bold text-white leading-relaxed tracking-wide"
-          >
-            Login
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={!formik.dirty || !formik.isValid}
+              className="bg-primary text-lg px-4 disabled:bg-secondary hover:bg-secondary rounded mt-2 font-bold text-white leading-relaxed tracking-wide"
+            >
+              Login
+            </button>
+          </form>
 
-        <p className="my-3 text-center">
-          <Link
-            href={"/register"}
-            className="text-primary hover:text-secondary font-semibold"
-          >
-            Forgot password ?
-          </Link>
-        </p>
+          <p className="my-3 text-center">
+            <Link
+              href={"/register"}
+              className="text-primary hover:text-secondary font-semibold"
+            >
+              Forgot password ?
+            </Link>
+          </p>
+        </div>
       </div>
-    </div>
+    </Suspense>
+  );
+};
+
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckPassword />
+    </Suspense>
   );
 };
 
